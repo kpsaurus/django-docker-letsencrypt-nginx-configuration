@@ -1,0 +1,10 @@
+!.gitignore
+.idea/*
+*.DS_Store
+ __pycache__/*
+*.pyc
+env/*
+.env
+.env.dev
+.env.prod
+static/*

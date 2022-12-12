@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  webapp:
+    container_name: DJANGO_PROJECT
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - ./static:/app/static
+      - static-files:/static
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    networks:
+      - djangoproject_net
+    restart: on-failure
+
+volumes:
+  static-files:
+      name: djangoproject_volume
+
+networks:
+  djangoproject_net:
+    external:
+       name: supernet
+

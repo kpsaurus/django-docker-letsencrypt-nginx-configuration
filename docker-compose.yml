@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  nginx:
+    container_name: NGINX
+    build: .
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - proxynet
+    volumes:
+      - ./configs:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - your_named_volume:/volumes/<DJANGO_PROJECT>/static
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+volumes:
+  your_named_volume:
+    external:
+       name: your_named_volume
+
+networks:
+  proxynet:
+      name: supernet
